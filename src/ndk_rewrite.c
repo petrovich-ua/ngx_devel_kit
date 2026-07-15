@@ -5,6 +5,13 @@
  * be provided later to un-define them as being static
  */
 
+/* Added in nginx 1.31.3 and backported to 1.30.4; not in freenginx. */
+#if !defined(freenginx)                                               \
+    && (nginx_version >= 1030004)                                     \
+    && (nginx_version < 1031000 || nginx_version >= 1031003)
+#define NDK_HAVE_HTTP_SCRIPT_COMPLEX_VALUE_END_CODE
+#endif
+
 
 uintptr_t ndk_http_script_exit_code = (uintptr_t) NULL;
 
@@ -17,6 +24,9 @@ ndk_http_rewrite_value (ngx_conf_t *cf, ndk_http_rewrite_loc_conf_t *lcf,
     ngx_http_script_compile_t              sc;
     ngx_http_script_value_code_t          *val;
     ngx_http_script_complex_value_code_t  *complex;
+#ifdef NDK_HAVE_HTTP_SCRIPT_COMPLEX_VALUE_END_CODE
+    ngx_http_script_complex_value_end_code_t  *complex_end;
+#endif
 
     n = ngx_http_script_variables_count(value);
 
@@ -63,6 +73,17 @@ ndk_http_rewrite_value (ngx_conf_t *cf, ndk_http_rewrite_loc_conf_t *lcf,
         return NGX_CONF_ERROR;
     }
 
+#ifdef NDK_HAVE_HTTP_SCRIPT_COMPLEX_VALUE_END_CODE
+    complex_end = ngx_http_script_add_code(lcf->codes,
+                              sizeof(ngx_http_script_complex_value_end_code_t),
+                              &complex);
+    if (complex_end == NULL) {
+        return NGX_CONF_ERROR;
+    }
+
+    complex_end->code = ngx_http_script_complex_value_end_code;
+#endif
+
     return NGX_CONF_OK;
 }
 
@@ -99,5 +120,3 @@ ndk_http_rewrite_var (ngx_http_request_t *r, ngx_http_variable_value_t *v,
 
     return  NGX_OK;
 }
-
-
