@@ -5,14 +5,6 @@
  * be provided later to un-define them as being static
  */
 
-/* Added in nginx 1.31.3 and backported to 1.30.4; not in freenginx. */
-#if !defined(freenginx)                                               \
-    && (nginx_version >= 1030004)                                     \
-    && (nginx_version < 1031000 || nginx_version >= 1031003)
-#define NDK_HAVE_HTTP_SCRIPT_COMPLEX_VALUE_END_CODE
-#endif
-
-
 uintptr_t ndk_http_script_exit_code = (uintptr_t) NULL;
 
 
