@@ -5,6 +5,7 @@
  * be provided later to un-define them as being static
  */
 
+
 uintptr_t ndk_http_script_exit_code = (uintptr_t) NULL;
 
 
@@ -112,3 +113,5 @@ ndk_http_rewrite_var (ngx_http_request_t *r, ngx_http_variable_value_t *v,
 
     return  NGX_OK;
 }
+
+
